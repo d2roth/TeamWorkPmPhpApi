@@ -5,67 +5,77 @@ class Task extends Model
     protected function init()
     {
         $this->fields = [
-            'content'=>true,
-            'notify'=>[
-                'required'=>false,
-                'attributes'=>[
-                    'type'=>'boolean'
-                ]
-            ],
-            'description'=>false,
-            'due_date'=>[
-                'required'=>false,
-                'attributes'=>[
-                    'type'=>'integer'
-                ]
-            ],
-            'start_date'=>[
-                'required'=>false,
-                'attributes'=>[
-                    'type'=>'integer'
-                ]
-            ],
-            'private'=>[
-                'required'=>false,
-                'attributes'=>[
-                    'type'=>'boolean'
-                ]
-            ],
-            'priority'=>[
-                'required'=>false,
-                'validate'=>[
-                    'low',
-                    'medium',
-                    'high'
-                ]
-            ],
-            'estimated_minutes'=>[
-                'required'=>false,
-                'attributes'=>[
-                    'type'=>'integer'
-                ]
-            ],
-            'predecessors'=>[
-                'required'=>false,
-                'attributes'=>[
-                    'type'=>'array'
-                ]
-            ],
-            'responsible_party_id'     => false,
-            'attachments'              => false,
-            'pending_file_attachments' => false
+          'content' => true,
+          'description' => false,
+          'parentTaskId' => [
+            'required' => false,
+            'attributes' => [
+              'type' => 'integer'
+            ]
+          ],
+          'progress' => [
+            'required' => false,
+            'attributes' => [
+              'type' => 'integer'
+            ]
+          ],
+          'notify' => [
+            'required' => false,
+            'attributes' => [
+              'type' => 'boolean'
+            ]
+          ],
+          'responsible-party-id' => false,
+          'start-date' => [
+            'required' => false,
+            'attributes' => [
+              'type' => 'integer'
+            ]
+          ],
+          'due-date' => [
+            'required' => false,
+            'attributes' => [
+              'type' => 'integer'
+            ]
+          ],
+          'priority' => [
+            'required' => false,
+            'validate' => [
+              'low',
+              'medium',
+              'high'
+            ]
+          ],
+          'attachments' => false,
+          'pendingFileAttachments' => false,
+          'estimated-minutes' => [
+            'required' => false,
+            'attributes' => [
+              'type' => 'integer'
+            ]
+          ],
+          'positionAfterTask' => false,
+          'tags' => false,
+          'commentFollowerIds' => false,
+          'changeFollowerIds' => false,
+          'private' => [
+            'required' => false,
+            'attributes' => [
+              'type' => 'boolean'
+            ]
+          ],
+          'grant-access-to' => false,
+          'columnId' => [
+            'required' => false,
+            'attributes' => [
+              'type' => 'integer'
+            ]
+          ],
         ];
         $this->parent = 'todo-item';
         $this->action = 'todo_items';
    }
 
-    /**
-     * @param $id
-     * @param bool $get_time
-     *
-     * @return \TeamWorkPm\Response\Model
-     * @throws \TeamWorkPm\Exception
-     */
     public function get($id, $get_time = false)
     {
         $id = (int) $id;
@@ -143,6 +153,23 @@ class Task extends Model
             unset($data['files']);
         }
         return $this->rest->post("todo_lists/$task_list_id/$this->action", $data);
+    }
+
+    /**
+     * Updates an Item
+     * Allows files to be added during update
+     * 
+     * @param array $data
+     * @return bool
+     */
+    public function update(array $data)
+    {
+        if (!empty($data['files'])) {
+            $file = \TeamWorkPm\Factory::build('file');
+            $data['pending_file_attachments'] = $file->upload($data['files']);
+            unset($data['files']);
+        }
+        return parent::update($data);
     }
 
     /**
