@@ -103,24 +103,24 @@ class Task extends Model
      * A flag "canEdit" is returned with each task.
      *
      * @param int $task_list_id
-     * @param string $filter
+     * @param mixed $params
      *
-     * @return \TeamWorkPm\Response\Model
-     * @throws \TeamWorkPm\Exception
+     * @return TeamWorkPm\Response\Model
      */
-    public function getByTaskList($task_list_id, $filter = 'all')
+    public function getByTaskList($task_list_id, $params = [])
     {
         $task_list_id = (int) $task_list_id;
         if ($task_list_id <= 0) {
             throw new Exception('Invalid param task_list_id');
         }
-        $params = [
-            'filter'=> $filter
-        ];
-        $filter = strtolower($filter);
-        $validate = ['all', 'pending', 'upcoming','late','today','finished'];
-        if (in_array($filter, $validate)) {
-            $params['filter'] = 'all';
+        if(is_string($params)){
+            $filter = strtolower($params);
+            $validate = ['all', 'pending', 'upcoming','late','today','finished'];
+            if (in_array($filter, $validate)) {
+                $params['filter'] = 'all';
+            } else {
+                $params['filter'] = $filter;
+            }
         }
         return $this->rest->get("todo_lists/$task_list_id/$this->action", $params);
     }
