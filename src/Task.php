@@ -125,6 +125,39 @@ class Task extends Model
         return $this->rest->get("todo_lists/$task_list_id/$this->action", $params);
     }
 
+
+    /**
+     * Retrieve all tasks
+     *
+     * GET /tasks.json
+     *
+     * @param mixed $params
+     *
+     * @return TeamWorkPm\Response\Model
+     */
+    public function getAll($params = [])
+    {
+        return $this->rest->get("tasks", $params);
+    }
+
+    /**
+     * Retrieve all tasks on a task list
+     *
+     * GET /projects/#{project_id}/tasks.json
+     *
+     * @param mixed $params
+     *
+     * @return TeamWorkPm\Response\Model
+     */
+    public function getByProject($id, $params = [])
+    {
+        $project_id = (int) $id;
+        if ($project_id <= 0) {
+            throw new Exception('Invalid param project_id');
+        }
+        return $this->rest->get("projects/$project_id/tasks", $params);
+    }
+
     /**
      * Create Item on a List
      *
