@@ -149,7 +149,7 @@ class Task extends Model
         }
         if (!empty($data['files'])) {
             $file = \TeamWorkPm\Factory::build('file');
-            $data['pending_file_attachments'] = $file->upload($data['files']);
+            $data['pendingFileAttachments'] = $file->upload($data['files']);
             unset($data['files']);
         }
         return $this->rest->post("todo_lists/$task_list_id/$this->action", $data);
