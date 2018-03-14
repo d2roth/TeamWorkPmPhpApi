@@ -116,7 +116,7 @@ class Task extends Model
         if(is_string($params)){
             $filter = strtolower($params);
             $validate = ['all', 'pending', 'upcoming','late','today','finished'];
-            if (in_array($filter, $validate)) {
+            if (!in_array($filter, $validate)) {
                 $params['filter'] = 'all';
             } else {
                 $params['filter'] = $filter;
